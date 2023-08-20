@@ -1,10 +1,10 @@
 # =============================================================================
-# Author: Xianyuan Liu, xianyuan.liu@sheffield.ac.uk or xianyuan.liu@outlook.com
+# Author: Xianyuan Liu, xianyuan.liu@outlook.com
 # =============================================================================
 
 """Add SELayers to MC3_18, R3D_18, R2plus1D_18"""
 
-from torchvision.models.utils import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
 from kale.embed.video_res3d import (
     BasicBlock,

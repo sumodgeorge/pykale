@@ -1,6 +1,6 @@
 # Test Guidelines
 
-All code should be covered by [unit tests](https://carpentries-incubator.github.io/python-testing/04-units/index.html) with at least 70% coverage, and [regression tests](https://carpentries-incubator.github.io/python-testing/07-integration/index.html) where appropriate. When a bug is located and fixed, new test(s) should be added that would catch this bug. Please use [pykale discussions on testing](https://github.com/pykale/pykale/discussions/categories/testing) to talk about tests and ask for help.
+All code should be covered by [unit tests](https://carpentries-incubator.github.io/python-testing/04-units/index.html) with at least 70% coverage, and [regression tests](https://carpentries-incubator.github.io/python-testing/07-integration/index.html) where appropriate. When a bug is located and fixed, new test(s) should be added that would catch this bug. Please use [pykale discussions on testing](https://github.com/pykale/pykale/discussions/categories/testing) to talk about tests and ask for help. The overall and specific coverage of your commits can be checked conveniently by browsing the respective branch at the [codecov report](https://app.codecov.io/gh/pykale/pykale/commits), e.g., [check commits under the rewrite-gripnet branch](https://app.codecov.io/gh/pykale/pykale/commits?branch=rewrite-gripnet) by clicking the specific commits.
 
 These guidelines will help you to write tests to address sufficiently compact pieces of code such that it is easy to identify causes of failure and for tests to also cover larger workflows such that confidence or trust can be built in reproducibility of outputs. We use [pytest](https://docs.pytest.org/en/stable/) (see tutorials [python testing software carpentry (alpha)](https://carpentries-incubator.github.io/python-testing/) and [tutorialspoint pytest tutorial](https://www.tutorialspoint.com/pytest/pytest_tutorial.pdf)). There is some subjectivity involved in deciding how much of the potential behaviour of your code to check.
 
@@ -48,7 +48,7 @@ pytest
 
 A **unit test** checks that a small "unit" of software (e.g. a function) performs correctly. It might, for example, check that the function `add` returns the number `2` when a list `[1, 1]` is the input.
 
-Within the `tests/` folder is a folder structure that mimics that of the `kale` python module. Unit tests for code in a given file in `kale/` should be placed in their equivalent file in `tests/` e.g. unit tests for a function in `pykale/kale/loaddata/cifar_access.py` should be located in `pykale/tests/loaddata/test_cifar_access.py`.
+Within the `tests/` folder is a folder structure that mimics that of the `kale` python module. Unit tests for code in a given file in `kale/` should be placed in their equivalent file in `tests/` e.g. unit tests for a function in `pykale/kale/loaddata/image_access.py` should be located in `pykale/tests/loaddata/test_image_access.py`.
 
 Philosophically, the author of a "unit" of code knows exactly what it should do and can write the test criteria accordingly.
 

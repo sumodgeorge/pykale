@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 import pytest
-import pytorch_lightning as pl
 from yacs.config import CfgNode as CN
 
 from kale.loaddata.video_access import VideoDataset
@@ -12,6 +11,7 @@ from kale.predict.class_domain_nets import ClassNetVideo, DomainNetVideo
 from kale.utils.download import download_file_by_url
 from kale.utils.seed import set_seed
 from tests.helpers.boring_model import VideoBoringModel
+from tests.helpers.pipe_test_helper import ModelTestHelper
 
 SOURCES = [
     "ADL;7;adl_P_11_train.pkl;adl_P_11_test.pkl",
@@ -24,12 +24,12 @@ IMAGE_MODALITY = ["rgb", "flow", "joint"]
 DA_METHODS = ["DANN", "CDAN", "CDAN-E", "WDGRL", "DAN", "JAN", "Source"]
 WEIGHT_TYPE = "natural"
 DATASIZE_TYPE = "max"
-VAL_RATIO = 0.1
+VALID_RATIO = 0.1
 seed = 36
 set_seed(seed)
 
 root_dir = os.path.dirname(os.path.dirname(os.getcwd()))
-url = "https://github.com/pykale/data/raw/main/video_data/video_test_data.zip"
+url = "https://github.com/pykale/data/raw/main/videos/video_test_data.zip"
 
 
 @pytest.fixture(scope="module")
@@ -73,8 +73,8 @@ def test_video_domain_adapter(source_cfg, target_cfg, image_modality, da_method,
     cfg.DATASET.SRC_TRAINLIST = source_trainlist
     cfg.DATASET.SRC_TESTLIST = source_testlist
     cfg.DATASET.TARGET = target_name
-    cfg.DATASET.TAR_TRAINLIST = target_trainlist
-    cfg.DATASET.TAR_TESTLIST = target_testlist
+    cfg.DATASET.TGT_TRAINLIST = target_trainlist
+    cfg.DATASET.TGT_TESTLIST = target_testlist
     cfg.DATASET.IMAGE_MODALITY = image_modality
     cfg.DATASET.WEIGHT_TYPE = WEIGHT_TYPE
     cfg.DATASET.SIZE_TYPE = DATASIZE_TYPE
@@ -123,7 +123,7 @@ def test_video_domain_adapter(source_cfg, target_cfg, image_modality, da_method,
 
     # setup DA method
     if method.is_mmd_method():
-        model = video_domain_adapter.create_mmd_based_4video(
+        model = video_domain_adapter.create_mmd_based_video(
             method=method,
             dataset=dataset,
             image_modality=cfg.DATASET.IMAGE_MODALITY,
@@ -145,7 +145,7 @@ def test_video_domain_adapter(source_cfg, target_cfg, image_modality, da_method,
         if da_method == "CDAN":
             method_params["use_random"] = cfg.DAN.USERANDOM
 
-        model = video_domain_adapter.create_dann_like_4video(
+        model = video_domain_adapter.create_dann_like_video(
             method=method,
             dataset=dataset,
             image_modality=cfg.DATASET.IMAGE_MODALITY,
@@ -156,11 +156,4 @@ def test_video_domain_adapter(source_cfg, target_cfg, image_modality, da_method,
             **train_params,
         )
 
-    assert isinstance(model, domain_adapter.BaseAdaptTrainer)
-
-    # training process
-    trainer = pl.Trainer(min_epochs=train_params["nb_init_epochs"], max_epochs=train_params["nb_adapt_epochs"], gpus=0)
-    trainer.fit(model)
-    trainer.test()
-    metric_values = trainer.callback_metrics
-    assert isinstance(metric_values, dict)
+    ModelTestHelper.test_model(model, train_params)

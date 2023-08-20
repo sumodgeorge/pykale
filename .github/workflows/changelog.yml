@@ -8,14 +8,15 @@ on:
     types: [opened]
 
 jobs:
-  log_changes:
+  log-changes:
+    name: Log changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run changelog
-        uses: saadmk11/changelog-ci@v0.7.0
+        uses: saadmk11/changelog-ci@v1.1.1
         with:
           changelog_filename: .github/CHANGELOG.md
           config_file: .github/changelog-ci-config.json
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

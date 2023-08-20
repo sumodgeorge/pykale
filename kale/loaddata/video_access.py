@@ -1,5 +1,5 @@
 # =============================================================================
-# Author: Xianyuan Liu, xianyuan.liu@sheffield.ac.uk or xianyuan.liu@outlook.com
+# Author: Xianyuan Liu, xianyuan.liu@outlook.com
 #         Haiping Lu, h.lu@sheffield.ac.uk or hplu@ieee.org
 # =============================================================================
 
@@ -41,9 +41,9 @@ def get_videodata_config(cfg):
             "dataset_src_name": cfg.DATASET.SOURCE,
             "dataset_src_trainlist": cfg.DATASET.SRC_TRAINLIST,
             "dataset_src_testlist": cfg.DATASET.SRC_TESTLIST,
-            "dataset_tar_name": cfg.DATASET.TARGET,
-            "dataset_tar_trainlist": cfg.DATASET.TAR_TRAINLIST,
-            "dataset_tar_testlist": cfg.DATASET.TAR_TESTLIST,
+            "dataset_tgt_name": cfg.DATASET.TARGET,
+            "dataset_tgt_trainlist": cfg.DATASET.TGT_TRAINLIST,
+            "dataset_tgt_testlist": cfg.DATASET.TGT_TESTLIST,
             "dataset_image_modality": cfg.DATASET.IMAGE_MODALITY,
             "frames_per_segment": cfg.DATASET.FRAMES_PER_SEGMENT,
         }
@@ -56,7 +56,7 @@ def generate_list(data_name, data_params_local, domain):
 
     Args:
         data_name (string): name of dataset
-        data_params_local (dict): hyper parameters from configure file
+        data_params_local (dict): hyperparameters from configure file
         domain (string): domain type (source or target)
 
     Returns:
@@ -98,12 +98,12 @@ class VideoDataset(Enum):
         Sets class_number as 8 for EPIC, 7 for ADL, 6 for both GTEA and KITCHEN.
 
         Args:
-            source: (VideoDataset): source dataset name
-            target: (VideoDataset): target dataset name
-            seed: (int): seed value set manually.
-            params: (CfgNode): hyper parameters from configure file
+            source (VideoDataset): source dataset name
+            target (VideoDataset): target dataset name
+            seed (int): seed value set manually
+            params (CfgNode): hyperparameters from configure file
 
-        Examples::
+        Examples:
             >>> source, target, num_classes = get_source_target(source, target, seed, params)
         """
         config_params = get_videodata_config(params)
@@ -111,8 +111,8 @@ class VideoDataset(Enum):
         data_params_local = deepcopy(data_params)
         data_src_name = data_params_local["dataset_src_name"].upper()
         src_data_path, src_tr_listpath, src_te_listpath = generate_list(data_src_name, data_params_local, domain="src")
-        data_tar_name = data_params_local["dataset_tar_name"].upper()
-        tar_data_path, tar_tr_listpath, tar_te_listpath = generate_list(data_tar_name, data_params_local, domain="tar")
+        data_tgt_name = data_params_local["dataset_tgt_name"].upper()
+        tgt_data_path, tgt_tr_listpath, tgt_te_listpath = generate_list(data_tgt_name, data_params_local, domain="tgt")
         image_modality = data_params_local["dataset_image_modality"]
         frames_per_segment = data_params_local["frames_per_segment"]
 
@@ -158,9 +158,9 @@ class VideoDataset(Enum):
                 seed,
             )
             rgb_target = factories[target](
-                tar_data_path,
-                tar_tr_listpath,
-                tar_te_listpath,
+                tgt_data_path,
+                tgt_tr_listpath,
+                tgt_te_listpath,
                 "rgb",
                 frames_per_segment,
                 num_classes,
@@ -180,9 +180,9 @@ class VideoDataset(Enum):
                 seed,
             )
             flow_target = factories[target](
-                tar_data_path,
-                tar_tr_listpath,
-                tar_te_listpath,
+                tgt_data_path,
+                tgt_tr_listpath,
+                tgt_te_listpath,
                 "flow",
                 frames_per_segment,
                 num_classes,
@@ -209,7 +209,7 @@ class VideoDatasetAccess(DatasetAccess):
         frames_per_segment (int): length of each action sample (the unit is number of frame)
         n_classes (int): number of class
         transform_kind (string): types of video transforms
-        seed: (int): seed value set manually.
+        seed (int): seed value set manually
     """
 
     def __init__(
@@ -224,13 +224,13 @@ class VideoDatasetAccess(DatasetAccess):
         self._transform = video_transform.get_transform(transform_kind, self._image_modality)
         self._seed = seed
 
-    def get_train_val(self, val_ratio):
+    def get_train_valid(self, valid_ratio):
         """Get the train and validation dataset with the fixed random split. This is used for joint input like RGB and
-        optical flow, which will call `get_train_val` twice. Fixing the random seed here can keep the seeds for twice
+        optical flow, which will call `get_train_valid` twice. Fixing the random seed here can keep the seeds for twice
         the same."""
         train_dataset = self.get_train()
         ntotal = len(train_dataset)
-        ntrain = int((1 - val_ratio) * ntotal)
+        ntrain = int((1 - valid_ratio) * ntotal)
         return torch.utils.data.random_split(
             train_dataset, [ntrain, ntotal - ntrain], generator=torch.Generator().manual_seed(self._seed)
         )

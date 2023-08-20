@@ -1,5 +1,5 @@
 # ===============================================================================
-# Author: Xianyuan Liu, xianyuan.liu@sheffield.ac.uk or xianyuan.liu@outlook.com
+# Author: Xianyuan Liu, xianyuan.liu@outlook.com
 #         Raivo Koot, rekoot1@sheffield.ac.uk
 #         Haiping Lu, h.lu@sheffield.ac.uk or hplu@ieee.org
 # ===============================================================================
@@ -29,10 +29,10 @@ def download_file_by_url(url, output_directory, output_file_name, file_format=No
                                 For compressed file, support ["tar.xz", "tar", "tar.gz", "tgz", "gz", "zip"]
 
     Example: (Grab the raw link from GitHub. Notice that using "raw" in the URL.)
-        >>> url = "https://github.com/pykale/data/raw/main/video_data/video_test_data/ADL/annotations/labels_train_test/adl_P_04_train.pkl"
+        >>> url = "https://github.com/pykale/data/raw/main/videos/video_test_data/ADL/annotations/labels_train_test/adl_P_04_train.pkl"
         >>> download_file_by_url(url, "data", "a.pkl", "pkl")
 
-        >>> url = "https://github.com/pykale/data/raw/main/video_data/video_test_data.zip"
+        >>> url = "https://github.com/pykale/data/raw/main/videos/video_test_data.zip"
         >>> download_file_by_url(url, "data", "video_test_data.zip", "zip")
 
     """
@@ -41,12 +41,14 @@ def download_file_by_url(url, output_directory, output_file_name, file_format=No
     file = Path(output_directory).joinpath(output_file_name)
     if os.path.exists(file):
         logging.info("Skipping Download and Extraction")
+
         return
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     if file_format in ["tar.xz", "tar", "tar.gz", "tgz", "gz", "zip"]:
         logging.info("Downloading and extracting {}.".format(output_file_name))
+
         download_and_extract_archive(url=url, download_root=output_directory, filename=output_file_name)
         logging.info("Datasets downloaded and extracted in {}".format(file))
     else:

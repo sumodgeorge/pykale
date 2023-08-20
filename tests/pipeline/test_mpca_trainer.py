@@ -4,7 +4,7 @@ import pytest
 from numpy import testing
 from sklearn.metrics import accuracy_score, roc_auc_score
 
-from kale.interpret import model_weights
+from kale.interpret import model_weights, visualize
 from kale.pipeline.mpca_trainer import MPCATrainer
 
 CLASSIFIERS = ["svc", "linear_svc", "lr"]
@@ -12,7 +12,7 @@ PARAMS = [
     {"classifier_params": "auto", "mpca_params": None, "n_features": None, "search_params": None},
     {
         "classifier_params": {"C": 1},
-        "mpca_params": {"var_ratio": 0.9, "return_vector": True},
+        "mpca_params": {"var_ratio": 0.9, "vectorize": True},
         "n_features": 100,
         "search_params": {"cv": 3},
     },
@@ -51,7 +51,7 @@ def test_mpca_trainer(classifier, params, gait):
     else:
         weights = trainer.mpca.inverse_transform(trainer.clf.coef_) - trainer.mpca.mean_
         top_weights = model_weights.select_top_weight(weights, select_ratio=0.1)
-        fig = model_weights.plot_weights(top_weights[0][0], background_img=x[0][0])
+        fig = visualize.plot_weights(top_weights[0][0], background_img=x[0][0])
         assert type(fig) == matplotlib.figure.Figure
 
 

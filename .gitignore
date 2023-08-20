@@ -1,9 +1,11 @@
 */**/__pycache__
 */__pycache__
+*.dcm
 *.pt
 *.pth
 *.zip
 *.ckpt
+*.json
 
 # Distribution / packaging
 build/
@@ -22,8 +24,10 @@ examples/data/
 examples/*/data/
 examples/*/outputs/
 examples/*/lightning_logs/
+examples/*/tb_logs/
+examples/*/logs/
 examples/*/demo*/
-examples/action_dann_lightn/configs_xianyuan/
+examples/*/configs_experiment/
 
 # Logs
 log-*.txt
@@ -37,9 +41,16 @@ docs/source/backup
 .coverage
 cov*.xml
 tests/test_data
+tests/loaddata/tests
+tests/pipeline/tests
 
 # Lightning
 lightning_logs
+tb_logs/*
 
 # Jupyter Notebook Checkpoints
 *-checkpoint.ipynb
+
+# Examples
+# cmri_mpca - the saved images
+examples/cmri_mpca/outputs

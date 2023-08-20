@@ -11,7 +11,7 @@ from config import get_cfg_defaults
 from model import get_model
 from trainer import Trainer
 
-from kale.loaddata.cifar_access import get_cifar
+from kale.loaddata.image_access import get_cifar
 from kale.utils.logger import construct_logger
 from kale.utils.seed import set_seed
 
@@ -48,7 +48,7 @@ def main():
     logger.info("\n" + cfg.dump())
 
     # ---- setup dataset ----
-    train_loader, val_loader = get_cifar(cfg)
+    train_loader, valid_loader = get_cifar(cfg)
 
     print("==> Building model..")
     net = get_model(cfg)
@@ -70,7 +70,7 @@ def main():
         nesterov=cfg.SOLVER.NESTEROV,
     )
 
-    trainer = Trainer(device, train_loader, val_loader, net, optim, logger, output_dir, cfg)
+    trainer = Trainer(device, train_loader, valid_loader, net, optim, logger, output_dir, cfg)
 
     if args.resume:
         # Load checkpoint
@@ -80,7 +80,7 @@ def main():
         trainer.optim.load_state_dict(cp["optim"])
         trainer.epochs = cp["epoch"]
         trainer.train_acc = cp["train_accuracy"]
-        trainer.val_acc = cp["test_accuracy"]
+        trainer.valid_acc = cp["test_accuracy"]
 
     trainer.train()
 
