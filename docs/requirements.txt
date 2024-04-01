@@ -15,7 +15,7 @@ nbsphinx-link
 numpy
 
 pandas
-pillow>=6.2.0
+pillow>=10.3.0
 PyTDC
 pytorch-lightning
 rdkit
